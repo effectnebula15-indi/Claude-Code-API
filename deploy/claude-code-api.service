@@ -1,0 +1,51 @@
+# systemd unit for a bare-metal (non-Docker) install.
+#
+#   sudo cp deploy/claude-code-api.service /etc/systemd/system/
+#   sudo sed -i "s|@INSTALL_DIR@|/opt/claude-code-api|;s|@USER@|claude|" \
+#       /etc/systemd/system/claude-code-api.service
+#   sudo systemctl enable --now claude-code-api
+[Unit]
+Description=claude-code-api gateway
+Documentation=https://github.com/effectnebula15-indi/Claude-Code-API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+WorkingDirectory=@INSTALL_DIR@
+EnvironmentFile=@INSTALL_DIR@/.env
+ExecStart=/usr/bin/env node src/server.js
+Restart=always
+RestartSec=5
+# Give in-flight turns a chance to finish before the process is killed.
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# The gateway spawns one CLI process per conversation.
+LimitNOFILE=65535
+TasksMax=512
+
+# Hardening. The service only needs to read its own directory, write DATA_DIR,
+# and reach the network.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+LockPersonality=true
+# DATA_DIR and the Claude credential store must stay writable.
+ReadWritePaths=@INSTALL_DIR@/data
+ReadWritePaths=-/home/@USER@/.claude
+ReadWritePaths=-/home/@USER@/.config/claude
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=claude-code-api
+
+[Install]
+WantedBy=multi-user.target

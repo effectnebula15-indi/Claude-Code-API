@@ -1,0 +1,33 @@
+# Adds automatic HTTPS in front of the gateway.
+#
+#   1. point a DNS A record at this server
+#   2. set DOMAIN and ACME_EMAIL in .env
+#   3. docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
+#
+# Caddy obtains and renews the certificate on its own; nothing else to do.
+services:
+  api:
+    ports: !reset []
+    expose:
+      - "8787"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: claude-code-api-caddy
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:

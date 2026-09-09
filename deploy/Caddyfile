@@ -1,0 +1,31 @@
+# Automatic HTTPS in front of claude-code-api.
+# Used by docker-compose.tls.yml; DOMAIN and ACME_EMAIL come from .env.
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Streaming endpoints must not be buffered, and a model turn can legitimately
+	# take minutes.
+	reverse_proxy api:8787 {
+		flush_interval -1
+		transport http {
+			read_timeout 10m
+			write_timeout 10m
+		}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

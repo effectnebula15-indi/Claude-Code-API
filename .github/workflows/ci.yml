@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20.x", "22.x"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # No runtime dependencies, so there is nothing to install for the tests
+      # themselves; the dev dependency is only the TypeScript checker.
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - run: npm run typecheck
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - run: shellcheck install.sh scripts/*.sh
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t claude-code-api:ci .
+      - name: The image must start and answer /healthz
+        run: |
+          docker run -d --name cca -p 8787:8787 \
+            -e API_KEYS=ci:test-key \
+            claude-code-api:ci
+          for _ in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8787/healthz; then ok=1; break; fi
+            sleep 2
+          done
+          docker logs cca
+          test "${ok:-0}" = "1"

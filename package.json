@@ -1,0 +1,40 @@
+{
+  "name": "claude-code-api",
+  "version": "1.0.0",
+  "description": "Self-hosted OpenAI/Anthropic-compatible HTTP gateway on top of the Claude Code CLI. Runs on your Claude subscription instead of pay-per-token API credits.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.10"
+  },
+  "bin": {
+    "claude-code-api": "./src/server.js"
+  },
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --test-concurrency=1 test/unit.test.js test/e2e.test.js",
+    "typecheck": "tsc -p jsconfig.json --noEmit",
+    "smoke": "node scripts/smoke-test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^5.6.0"
+  },
+  "files": [
+    "src",
+    "config/agents.example.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "openai-compatible",
+    "llm",
+    "gateway",
+    "self-hosted",
+    "subscription"
+  ]
+}

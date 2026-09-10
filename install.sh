@@ -83,8 +83,13 @@ else
   ok "generated .env with fresh API keys"
 fi
 
-# shellcheck disable=SC1091
-set -a; . ./.env; set +a
+# Export everything .env defines, so the checks below see the generated keys.
+# The directive has to sit on the line directly above the `.` command: attached
+# to a `a; b; c` list it would only cover the first command in it.
+set -a
+# shellcheck source=/dev/null  # .env is generated at run time, nothing to follow
+. ./.env
+set +a
 
 if [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && [ ! -f "$HOME/.claude/.credentials.json" ]; then
   echo

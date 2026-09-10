@@ -129,6 +129,11 @@ claude --print --input-format stream-json --output-format stream-json --verbose 
 8. **`id` диалога всегда через `sanitizeConversationId()`.** Он приходит от
    клиента и становится ключом Map, ключом в файле сессий и полем лога.
 
+9. **Директива `# shellcheck` цепляется к следующей *команде*, не к строке.**
+   Над списком `set -a; . ./.env; set +a` она покроет только `set -a`. Источник
+   выносим на отдельную строку, директиву — прямо над ним. CI гоняет
+   `shellcheck install.sh scripts/*.sh` и падает даже на severity `info`.
+
 ---
 
 ## Правила, которые не обсуждаются
@@ -156,6 +161,9 @@ npm test           # 65 тестов: юниты + E2E против поддел
 npm run typecheck  # TypeScript по JSDoc, без сборки
 npm run dev        # автоперезапуск
 npm run smoke      # против настоящего CLI (тратит немного плана)
+
+# то же гоняет CI — прогоните перед пушем, если трогали скрипты
+shellcheck install.sh scripts/*.sh
 
 node --test --test-reporter=spec --test-name-pattern="websocket" test/e2e.test.js
 ```

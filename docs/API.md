@@ -205,6 +205,7 @@ required unless `PUBLIC_METRICS=1`.
 | 429 | `upstream_rate_limited` | Anthropic refused the turn. |
 | 503 | `queue_full` / `queue_timeout` | Too many callers. Back off and retry. |
 | 504 | `turn_timeout` | The turn exceeded `TURN_TIMEOUT_MS`. |
-| 502 | `not_authenticated` | The CLI is not logged in — run `claude setup-token`. |
+| 503 | `not_authenticated` | The CLI is not logged in — run `claude setup-token`. |
+| 503 | `cli_missing` | The `claude` binary is not installed or not on `CLAUDE_BIN`. |
 
 Every 429 and 503 carries `Retry-After` in seconds. Honour it.

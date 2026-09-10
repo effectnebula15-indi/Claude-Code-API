@@ -338,16 +338,20 @@ export class ClaudeProcess extends EventEmitter {
 /** @param {any} info @param {string} bin */
 function startupError(info, bin) {
   const stderr = String(info.stderr || '').trim();
+  // A missing or unauthenticated CLI means the gateway cannot serve anything at
+  // all — the same condition /readyz reports as 503, so use the same code here.
+  // It also tells a load balancer to take this instance out of rotation instead
+  // of retrying into a wall.
   if (/ENOENT/.test(stderr) || info.code === 127) {
     return new TurnError(
       `claude CLI not found (tried "${bin}"). Install it with: npm i -g @anthropic-ai/claude-code`,
-      { code: 'cli_missing', status: 500 },
+      { code: 'cli_missing', status: 503, retryAfter: 60 },
     );
   }
   if (/not logged in|Invalid API key|OAuth|authentication/i.test(stderr)) {
     return new TurnError(
       `claude CLI is not authenticated. Run "claude setup-token" and set CLAUDE_CODE_OAUTH_TOKEN. Details: ${stderr.slice(-500)}`,
-      { code: 'not_authenticated', status: 500 },
+      { code: 'not_authenticated', status: 503, retryAfter: 60 },
     );
   }
   return new TurnError(

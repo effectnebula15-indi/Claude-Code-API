@@ -145,6 +145,8 @@ node src/server.js                   # гейтвей, зависимостей 
 | `DELETE` | `/v1/sessions/{id}` | Сбросить диалог. |
 | `GET` | `/healthz` · `/readyz` · `/metrics` | Мониторинг, Prometheus. |
 
+**Памятка на одну страницу** — [docs/CHEATSHEET.md](docs/CHEATSHEET.md):
+готовые curl'ы, формат стрима, сообщения WebSocket, коды ошибок.
 Полное описание форматов — в [docs/API.md](docs/API.md).
 
 ### Любой OpenAI-клиент
@@ -372,7 +374,9 @@ E2E-тесты гоняют настоящий сервер поверх `test/f
 том же stream-json протоколе, поэтому маршрутизация, стриминг, диалоги,
 отмена и обработка ошибок проверяются, не тратя ни одного токена.
 
-Устройство кода — в [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+**Памятка по коду** — [docs/CODEMAP.md](docs/CODEMAP.md): карта файлов, рецепты
+(«добавить агента», «добавить эндпоинт») и список того, что уже ломалось.
+Почему всё устроено именно так — [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 Если что-то не работает — [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 
 ---

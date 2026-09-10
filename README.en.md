@@ -110,6 +110,7 @@ A hardened systemd unit is in `deploy/claude-code-api.service`.
 | `DELETE` | `/v1/sessions/{id}` | End a conversation. |
 | `GET` | `/healthz` · `/readyz` · `/metrics` | Monitoring, Prometheus. |
 
+One-page cheat sheet: [docs/CHEATSHEET.md](docs/CHEATSHEET.md) (Russian).
 Full reference: [docs/API.md](docs/API.md).
 
 ```python
@@ -269,7 +270,8 @@ covered without spending tokens.
 
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ·
 [docs/API.md](docs/API.md) ·
-[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) ·
+[docs/CHEATSHEET.md](docs/CHEATSHEET.md) and [docs/CODEMAP.md](docs/CODEMAP.md) (quick reference, Russian)
 
 ## License
 

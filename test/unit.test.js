@@ -416,5 +416,10 @@ test('a missing CLI binary is reported as a missing CLI, not a mystery', async (
     cwd: process.cwd(),
     startupTimeoutMs: 5000,
   });
-  await assert.rejects(() => proc.start(), (err) => err.code === 'cli_missing');
+  await assert.rejects(
+    () => proc.start(),
+    // 503, matching /readyz: the gateway cannot serve at all, so a load
+    // balancer should take it out of rotation rather than retry into a wall.
+    (err) => err.code === 'cli_missing' && err.status === 503 && err.retryAfter > 0,
+  );
 });
